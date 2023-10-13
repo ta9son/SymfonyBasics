@@ -1,0 +1,13 @@
+# アノテーションではなく、属性を使う場合
+# controllers:
+#   resource: ../src/Controller/
+#   type: attribute
+
+# アノテーションを使う場合
+controllers:
+  resource: ../src/Controller/
+  type: annotation
+# ルーティングの設定の場合
+# hello:
+#   path: /hello
+#   controller: App\Controller\HelloController::index
