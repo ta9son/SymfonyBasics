@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use PHPUnit\Util\Json;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
