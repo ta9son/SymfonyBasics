@@ -6,6 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+
 class HelloController extends AbstractController
 {
     /**
@@ -13,9 +17,14 @@ class HelloController extends AbstractController
      */
     public function index(Request $request)
     {
+
+        $form = $this->createFormBuilder()->add('input', TextType::class)
+            ->add('save', SubmitType::class, ['label' => '送信'])
+            ->getForm();
+
         if ($request->getMethod() == 'POST') {
-            $input = $request->request->get('input');
-            $msg = "こんにちは、" .  $input . "さん！";
+            $form->handleRequest($request);
+            $msg = "こんにちは、" .  $form->get('input')->getData() . "さん！";
         } else {
             $msg = 'お名前を入力してください。';
         }
@@ -23,6 +32,7 @@ class HelloController extends AbstractController
         return $this->render('hello/index.html.twig', [
             'title' => 'Hello',
             'msg' => $msg,
+            'form' => $form->createView(),
         ]);
     }
 }
