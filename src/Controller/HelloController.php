@@ -3,38 +3,34 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HelloController extends AbstractController
 {
     /**
-     * @Route("/hello", name="hello")
+     * @Route("/hello/{msg}", name="hello")
      */
-    public function index(Request $request)
+    public function index($msg = 'Hello')
     {
-        // $name = $request->get('name');
-        // $pass = $request->get('pass');
-        $result = '<html><body>';
-        $result .= '<h1>クエリパラメーターを表示</h1>';
-        // $result .= '<p>name: ' . $name . '</p>';
-        // $result .= '<p>pass: ' . $pass . '</p>';
-        $result .= '</body></html>';
-
-        return new Response($result);
+        return $this->render('hello/index.html.twig', [
+            'controller' => 'HelloController',
+            'action' => 'index',
+            'prev_action' => 'none',
+            'message' => $msg,
+        ]);
     }
 
+
     /**
-     * @Route("/other/{domain}", name="other")
+     * @Route("/other/{action}/{msg}", name="other")     
      */
-    public function other(Request $request, $domain = "")
+    public function other($action, $msg)
     {
-        if ($domain == "") {
-            return $this->redirect('/hello');
-        } else {
-            return new RedirectResponse("http://{$domain}.com");
-        }
+        return $this->render('hello/index.html.twig', [
+            'controller' => 'HelloController',
+            'action' => 'other',
+            'prev_action' => $action,
+            'message' => $msg,
+        ]);
     }
 }
