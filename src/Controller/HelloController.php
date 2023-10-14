@@ -2,31 +2,35 @@
 
 namespace App\Controller;
 
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HelloController extends AbstractController
 {
     /**
-     * @Route("/hello", name="hello")
+     * @Route("/hello/{msg}", name="hello")
      */
-    public function index(Request $request, LoggerInterface $logger)
+    public function index($msg = 'Hello')
     {
-        $data = array(
-            'name' => array('first' => 'Yamada', 'last' => 'Taro'),
-            'age' => 20,
-            'mail' => 'yamada@taro.kun'
-        );
+        return $this->render('hello/index.html.twig', [
+            'controller' => 'HelloController',
+            'action' => 'index',
+            'prev_action' => 'none',
+            'message' => $msg,
+        ]);
+    }
 
-        $logger->info(serialize($data));
-        return new JsonResponse($data);
+
+    /**
+     * @Route("/other/{action}/{msg}", name="other")     
+     */
+    public function other($action, $msg)
+    {
+        return $this->render('hello/index.html.twig', [
+            'controller' => 'HelloController',
+            'action' => 'other',
+            'prev_action' => $action,
+            'message' => $msg,
+        ]);
     }
 }
