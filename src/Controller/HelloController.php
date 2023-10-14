@@ -7,6 +7,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 
@@ -17,14 +19,26 @@ class HelloController extends AbstractController
      */
     public function index(Request $request)
     {
+        $person = new Person();
+        $person->setName('taro')
+            ->setAge(36)
+            ->setMail('taro@yamada.kun');
 
-        $form = $this->createFormBuilder()->add('input', TextType::class)
+
+
+        $form = $this->createFormBuilder($person)
+            ->add('name', TextType::class)
+            ->add('age', IntegerType::class)
+            ->add('mail', EmailType::class)
             ->add('save', SubmitType::class, ['label' => '送信'])
             ->getForm();
 
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
-            $msg = "こんにちは、" .  $form->get('input')->getData() . "さん！";
+            $obj = $form->getData();
+            $msg = 'Name:' . $obj->getName() . '<br>'
+                . 'Age:' . $obj->getAge() . '<br>'
+                . 'Mail:' . $obj->getMail();
         } else {
             $msg = 'お名前を入力してください。';
         }
@@ -34,5 +48,44 @@ class HelloController extends AbstractController
             'msg' => $msg,
             'form' => $form->createView(),
         ]);
+    }
+}
+
+// データクラス
+class Person
+{
+    protected $name;
+    protected $age;
+    protected $mail;
+
+    public function getName()
+    {
+        return $this->name;
+    }
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getAge()
+    {
+        return $this->age;
+    }
+    public function setAge($age)
+    {
+        $this->age = $age;
+        return $this;
+    }
+
+
+    public function getMail()
+    {
+        return $this->mail;
+    }
+    public function setMail($mail)
+    {
+        $this->mail = $mail;
+        return $this;
     }
 }
