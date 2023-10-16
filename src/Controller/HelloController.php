@@ -14,9 +14,15 @@ class HelloController extends AbstractController
      */
     public function index(Request $request)
     {
+        $data = [
+            array('name' => '山田太郎', 'age' => 34, 'mail' => 'taro@yamada'),
+            array('name' => '田中花子', 'age' => 23, 'mail' => 'hanako@flower'),
+            array('name' => '鈴木幸子', 'age' => 45, 'mail' => 'sachiko@happy'),
+        ];
+
         return $this->render('hello/index.html.twig', [
             'title' => 'Hello',
-            'message' => 'テンプレートで計算を行います。',
+            'data' => $data,
         ]);
     }
 }

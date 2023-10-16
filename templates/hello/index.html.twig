@@ -1,51 +1,13 @@
 {% extends 'base.html.twig' %}
-{%  import 'macro.html.twig' as m %}
 
 {% block page %}{{title}}{% endblock %}
 {% block title %}{{title}}{% endblock %}
 
 
 {% block body %}
-    {# set #}
-    {% set price = 123000 %}    
-    <p>{{message}}</p>
-    <p>金額: {{ price }}円</p>
-    {% set taxprice = price * 1.1 %}
-    <p>税込金額: {{ taxprice }}円</p>
+    <p>※フォームを用意します</p>
+    {% include '/hello/form.html.twig' %}    
 
-    {# with #}
-    {% with %}
-        {% set price_in_with = 1000 %}
-        <p>with内の金額: {{ price_in_with }}円</p>
-        {% set taxprice_in_with = price_in_with * 1.1 %}
-        <p>with内の税込金額: {{ taxprice_in_with }}円</p>
-    {% endwith %}
-
-    {# if #}
-    {% set flg = true %}
-    {% set message = 'This is sample message' %}
-
-    {% if flg %}
-        <p>{{ message }}</p>
-    {% else %}
-        <p>メッセージカードはありません</p>
-    {% endif %}
-
-    {# for  #}
-    {% set arr = ['One', 'Two', 'Three', 'Four'] %}
-    <ul>
-        {% for i in arr %}
-            <li>{{i}}</li>
-        {% endfor %}
-    </ul>
-
-    {# macro #}
-    <table>
-        {{ m.input('text', 'Name', 'noname') }}
-        {{ m.input('number', 'Age', '0') }}
-        {{ m.input('email', 'Email', 'no@mail') }}
-        {{ m.submit('Click') }}
-    </table>
-
-
+    <p>include時に値を渡す</p>
+    {% include '/hello/table.html.twig' with [data] %}
 {% endblock %}
