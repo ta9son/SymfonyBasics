@@ -5,9 +5,21 @@
 
 
 {% block body %}
-    <p>※フォームを用意します</p>
-    {% include '/hello/form.html.twig' %}    
-
-    <p>include時に値を渡す</p>
-    {% include '/hello/table.html.twig' with [data] %}
+    <h2>Person table</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Mail</th>
+            <th>Age</th>
+        </tr>
+        {% for i in data %}
+        <tr>
+            <td>{{i.id}}</td>
+            <td>{{i.name}}</td>
+            <td>{{i.mail}}</td>
+            <td>{{i.age}}</td>
+        </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
