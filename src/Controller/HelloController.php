@@ -3,15 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Person;
-use Doctrine\ORM\EntityManager;
+use App\Form\PersonType;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+
 
 class HelloController extends AbstractController
 {
@@ -46,5 +46,82 @@ class HelloController extends AbstractController
             'title' => 'hello',
             'data' => $person,
         ]);
+    }
+
+    /**
+     * @Route("/create", name="create")
+     */
+    public function create(Request $request, EntityManagerInterface $em)
+    {
+        $person = new Person();
+        $form = $this->createForm(PersonType::class, $person);
+        $form->handleRequest($request);
+
+        if ($request->getMethod() == 'POST') {
+            $person = $form->getData();
+            $em->persist($person);
+            $em->flush();
+            return $this->redirect('/hello');
+        } else {
+            return $this->render('hello/create.html.twig', [
+                'title' => 'Hello',
+                'message' => 'Create Entity',
+                'form' => $form->createView(),
+            ]);
+        }
+    }
+
+    /**
+     * @Route("/update/{id}", name="update")
+     */
+    public function update(Request $request, EntityManagerInterface $em, Person $person)
+    {
+        $form = $this->createFormBuilder($person)
+            ->add('name', TextType::class)
+            ->add('mail', TextType::class)
+            ->add('age', IntegerType::class)
+            ->add('save', SubmitType::class, array('label' => 'update'))
+            ->getForm();
+
+        if ($request->getMethod() == 'POST') {
+            $form->handleRequest($request);
+            $person = $form->getData();
+            $em->flush();
+            return $this->redirect('/hello');
+        } else {
+            return $this->render('hello/create.html.twig', [
+                'title' => 'Hello',
+                'message' => 'Update Entity id' . $person->getId(),
+                'form' => $form->createView(),
+            ]);
+        }
+    }
+
+
+    /**
+     * @Route("/delete/{id}", name="delete")
+     */
+    public function delete(Request $request, Person $person, EntityManagerInterface $em)
+    {
+        $form = $this->createFormBuilder($person)
+            ->add('name', TextType::class)
+            ->add('mail', TextType::class)
+            ->add('age', IntegerType::class)
+            ->add('save', SubmitType::class, array('label' => 'Delete'))
+            ->getForm();
+
+        if ($request->getMethod() == 'POST') {
+            $form->handleRequest($request);
+            $person = $form->getData();
+            $em->remove($person);
+            $em->flush();
+            return $this->redirect('/hello');
+        } else {
+            return $this->render('hello/create.html.twig', [
+                'title' => 'Hello',
+                'message' => 'Delete Entity id' . $person->getId(),
+                'form' => $form->createView(),
+            ]);
+        }
     }
 }
