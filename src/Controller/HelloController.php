@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+// コントローラーフォームで検証する　追記
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class HelloController extends AbstractController
 {
@@ -65,7 +67,7 @@ class HelloController extends AbstractController
     /**
      * @Route("/create", name="create")
      */
-    public function create(Request $request, EntityManagerInterface $em)
+    public function create(Request $request, EntityManagerInterface $em, ValidatorInterface $validator)
     {
         $person = new Person();
         $form = $this->createForm(PersonType::class, $person);
@@ -73,9 +75,20 @@ class HelloController extends AbstractController
 
         if ($request->getMethod() == 'POST') {
             $person = $form->getData();
-            $em->persist($person);
-            $em->flush();
-            return $this->redirect('/hello');
+
+            $errors = $validator->validate($person);
+
+            if (count($errors) == 0) {
+                $manager = $em->persist($person);
+                $em->flush();
+                return $this->redirect('/hello');
+            } else {
+                return $this->render('hello/create.html.twig', [
+                    'title' => 'Hello',
+                    'message' => 'ERROR!!',
+                    'form' => $form->createView(),
+                ]);
+            }
         } else {
             return $this->render('hello/create.html.twig', [
                 'title' => 'Hello',
