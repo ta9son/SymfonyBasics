@@ -9,9 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
-
-
-
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class HelloController extends AbstractController
 {
@@ -30,21 +29,36 @@ class HelloController extends AbstractController
     }
 
     /**
-     * @Route("/find/{id}", name="find")
+     * @Route("/find", name="find")
      */
-    public function find(Request $request, Person $person)
+    public function find(Request $request, EntityManagerInterface $em)
     {
-        if ($person === null) {
-            // レコードが見つからない場合
-            return $this->render('hello/find.html.twig', [
-                'title' => 'Error',
-                'data' => 'レコードが見つかりません。',
-            ]);
+        $formobj = new FindForm();
+        $form = $this->createFormBuilder($formobj)
+            ->add('find', TextType::class)
+            ->add('save', SubmitType::class, array("label" => "Click"))
+            ->getForm();
+
+        if ($request->getMethod() == "POST") {
+            $form->handleRequest($request);
+            $findstr = $form->getData()->getFind();
+            $repository = $em->getRepository(Person::class);
+            $result = $repository->findRsults($findstr);
+            // $result = $repository->findAllwithSort($findstr);
+            // $result = $repository->findByNameOrMail($findstr);
+            // $result = $repository->findByAgeBetween($findstr);
+            // $result = $repository->findByAgeIn($findstr);
+            // $result = $repository->findByNameAndSearch($findstr);
+            // $result = $repository->findByAge($findstr);
+            // $result = $repository->findByNameAimai($findstr);
+        } else {
+            $result = null;
         }
 
-        return $this->render('hello/find.html.twig', [
-            'title' => 'hello',
-            'data' => $person,
+        return $this->render('/hello/find.html.twig', [
+            'title' => 'Hello',
+            'form' => $form->createView(),
+            'data' => $result,
         ]);
     }
 
@@ -123,5 +137,20 @@ class HelloController extends AbstractController
                 'form' => $form->createView(),
             ]);
         }
+    }
+}
+
+class FindForm
+{
+    private $find;
+
+
+    public function getFind()
+    {
+        return $this->find;
+    }
+    public function setFind($find)
+    {
+        $this->find = $find;
     }
 }
