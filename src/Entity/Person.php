@@ -3,8 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\PersonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-// エンティティに検証情報を追記
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
@@ -28,6 +29,14 @@ class Person
     #[Assert\Type(type: 'integer', message: "数値を入力してください")]
     #[Assert\NotBlank(message: "必ず値を入力してください")]
     private ?int $age = null;
+
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: Message::class)]
+    private Collection $messages;
+
+    public function __construct()
+    {
+        $this->messages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -68,5 +77,40 @@ class Person
         $this->age = $age;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getPerson() === $this) {
+                $message->setPerson(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 }

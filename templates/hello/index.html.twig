@@ -19,6 +19,13 @@
             <td>{{i.name}}</td>
             <td>{{i.mail}}</td>
             <td>{{i.age}}</td>
+            <td>
+                <ul>
+                    {% for msg in i.messages %}
+                        <li>{{msg.content}}</li>
+                    {% endfor %}
+                </ul>
+            </td>
         </tr>
         {% endfor %}
     </table>
