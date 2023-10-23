@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-// コントローラーフォームで検証する　追記
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Finder\Finder;
 
 class HelloController extends AbstractController
 {
@@ -150,6 +150,47 @@ class HelloController extends AbstractController
                 'form' => $form->createView(),
             ]);
         }
+    }
+
+
+    #[Route('/filelist', name: 'filelist')]
+    public function filelist()
+    {
+        $finder = new Finder();
+        $finder->files()->in(__DIR__);
+
+        return $this->render('hello/filelist.html.twig', [
+            'title' => 'Hello',
+            'message' => __DIR__,
+            'finder' => $finder,
+        ]);
+    }
+
+    #[Route('/dirlist', name: 'dirlist')]
+    public function dirlist()
+    {
+        $finder = new Finder();
+        $finder->directories()->in('../src/');
+
+        return $this->render('hello/filelist.html.twig', [
+            'title' => 'Hello',
+            'message' => __DIR__,
+            'finder' => $finder,
+        ]);
+    }
+
+    // 複数箇所のFileを検索
+    #[Route('/filelist2', name: 'filelist2')]
+    public function filelist2()
+    {
+        $finder = new Finder();
+        $finder->files()->in(['../src/Controller', '../src/Entity', '../src/Form', '../src/Repository']);
+
+        return $this->render('hello/filelist.html.twig', [
+            'title' => 'Hello',
+            'message' => __DIR__,
+            'finder' => $finder,
+        ]);
     }
 }
 

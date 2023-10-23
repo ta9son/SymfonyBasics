@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+
+{% block page %}{{title}}{% endblock %}
+{% block title %}{{title}}{% endblock %}
+
+
+{% block body %}
+<h2>Hello</h2>
+<p>{{ message }}</p>
+<ul>
+{% for file in finder %}
+<li>{{file.filename}}</li>
+{% endfor %}
+</ul>
+{% endblock %}
